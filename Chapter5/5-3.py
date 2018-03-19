@@ -16,8 +16,17 @@ import re
 # print(result)
 # print(result2)
 
+# string = "hellomypythonhispythonourpythonend"
+# pattern = re.compile(".python.")
+# # 找到所有匹配的结果
+# result = pattern.findall(string)
+# print(result)
+
+
 string = "hellomypythonhispythonourpythonend"
-pattern = re.compile(".python.")
+pattern =".python."
 # 找到所有匹配的结果
-result = pattern.findall(string)
-print(result)
+result1 = re.sub(pattern,'php',string)
+print(result1)
+result2 = re.sub(pattern,'php',string,2)
+print(result2)
