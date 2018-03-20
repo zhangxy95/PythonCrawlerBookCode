@@ -14,9 +14,9 @@ def crawJD(url,page):
     imagelist = re.compile(pat2).findall(result1)
 
     # 添加手机名称
-    namepat  = "<em>(.*?[\u4e00-\u9fa5])</em>"
-    namelist = re.compile(namepat).findall(result1)
-    print(namelist)
+    namepat  = "<em>(.*?)</em>"
+    namelist = re.compile(namepat,re.S).findall(result1)
+    print(unicode(str(namelist[3])),"utf-8")
 
     index = 1
     for imageurl in imagelist:
