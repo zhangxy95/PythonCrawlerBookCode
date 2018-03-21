@@ -51,7 +51,74 @@ def getlisturl(key,pagestart,pageend,proxy):
         print(str(e))
         time.sleep(1)
 
-# to be continued
 def getcontent(listurl,proxy):
-    pass
+    i= 0
+    #设置本地html中的开始编码
+    html1 = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "
+http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>微信文章页面</title>
+<head/>
+<body>'''
+    fh = open("D:/zxy/GitHub/PythonCrawlerBookCode/Chapter6/1.html","wb")
+    fh.write(html1.encode("utf-8"))
+    fh.close()
+
+    fh = open("D:/zxy/GitHub/PythonCrawlerBookCode/Chapter6/1.html","ab")
+    for i in range(0, len(listurl)):
+        for j in range(0,len(listurl[i])):
+            try:
+                url = listurl[i][j]
+                url = url.replace("amp;","")
+                data = use_proxy(proxy,url)
+
+                titlepat = '<title>(.*?)</title>'
+                contentpat = 'id="js_content">(.*?)id="js_sg_bar"'
+                title = re.compile(titlepat).findall(data)
+                content = re.compile(contentpat,re.S).findall(data)
+
+                thistitle = "此次没有获取到"
+                thiscontent = "此次没有获取到"
+
+                if(title!=[]):
+                    thistitle=title[0]
+                if(content!=[]):
+                    thiscontent=content[0]
+
+                dataall = "<p>标题为："+thistitle+"</p><p>内容为："+thiscontent+"</p><br>"
+                fh.write(dataall.encode('utf-8'))
+                print(str(i)+"  "+str(j))
+
+            except urllib.error.URLError as e:
+                if hasattr(e,"code"):
+                    print(e.code)
+                if hasattr(e,"reason"):
+                    print(e.reason)
+
+                time.sleep(10)
+            except Exception as e:
+                print("exception"+str(e))
+                time.sleep(1)
+    fh.close()
+
+    html2 = '''</body>
+</html>'''
+
+    fh = open("D:/zxy/GitHub/PythonCrawlerBookCode/Chapter6/1.html","ab")
+    fh.write(html2.encode('utf-8'))
+    fh.close()
+
+key="睡觉"
+
+proxy = "180.118.92.105:9000"
+proxy2 =""
+
+pagestart=1
+pageend=2
+listurl = []
+listurl=getlisturl(key,pagestart,pageend,proxy)
+getcontent(listurl,proxy)
+
 
