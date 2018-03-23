@@ -2,6 +2,7 @@ import re
 import urllib.request
 import time
 import urllib.error
+from bs4 import BeautifulSoup
 
 headers = ("User-Agent",
                "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0")
@@ -13,7 +14,7 @@ listurl = []
 
 def use_proxy(proxy_addr,url):
     try:
-        proxy = urllib.request.ProxyHandler({'http:proxy_addr'})
+        proxy = urllib.request.ProxyHandler({'http':proxy_addr})
         opener = urllib.request.build_opener(proxy,urllib.request.HTTPHandler)
         urllib.request.install_opener(opener)
         data = urllib.request.urlopen(url).read().decode("utf-8")
@@ -25,6 +26,7 @@ def use_proxy(proxy_addr,url):
             print(e.reason)
         time.sleep(10)
     except Exception as e:
+        print("exception"+str(e))
         time.sleep(1)
 
 def getlisturl(key,pagestart,pageend,proxy):
@@ -33,11 +35,14 @@ def getlisturl(key,pagestart,pageend,proxy):
         keycode = urllib.request.quote(key)
         pagecode = urllib.request.quote("&page")
 
-        for page in range(pagestart,pageend):
-            url = "http://weixin.sogou.com/weixin?tyep=2&query="+keycode+pagecode+str(page)
+        for page in range(pagestart,pageend+1):
+            url = "http://weixin.sogou.com/weixin?type=2&query="+keycode+pagecode+str(page)
 
             data1 = use_proxy(proxy,url)
+            # soup = BeautifulSoup(data1,"lxml")
+            # print(soup.prettify(()))
             listurlpat = '<div class="txt-box">.*?(http://.*?)"'
+            # listurlpat = 'href="(http://.*?)"'
             listurl.append(re.compile(listurlpat,re.S).findall(data1))
         print("共获取到"+str(len(listurl))+"页")
         return listurl
@@ -54,8 +59,8 @@ def getlisturl(key,pagestart,pageend,proxy):
 def getcontent(listurl,proxy):
     i= 0
     #设置本地html中的开始编码
-    html1 = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "
-http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    html1 = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://
+    www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -112,13 +117,12 @@ http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 key="睡觉"
 
-proxy = "180.118.92.105:9000"
+proxy = "122.114.31.177:808"
 proxy2 =""
 
 pagestart=1
 pageend=2
-listurl = []
-listurl=getlisturl(key,pagestart,pageend,proxy)
+listurl=getlisturl(key,pagestart,pageend,None)
 getcontent(listurl,proxy)
 
 
